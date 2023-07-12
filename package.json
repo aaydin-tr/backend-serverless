@@ -12,12 +12,18 @@
   "dependencies": {
     "@middy/core": "^3.4.0",
     "@middy/http-json-body-parser": "^3.4.0",
-    "aws-sdk": "^2.1414.0"
+    "aws-sdk": "^2.1414.0",
+    "bcryptjs": "^2.4.3",
+    "jsonwebtoken": "^9.0.1",
+    "uuid": "^9.0.0"
   },
   "devDependencies": {
     "@serverless/typescript": "github:serverless/typescript",
     "@types/aws-lambda": "^8.10.71",
+    "@types/bcryptjs": "^2.4.2",
+    "@types/jsonwebtoken": "^9.0.2",
     "@types/node": "^14.14.25",
+    "@types/uuid": "^9.0.2",
     "esbuild": "^0.14.11",
     "json-schema-to-ts": "^1.5.0",
     "serverless": "^3.0.0",
