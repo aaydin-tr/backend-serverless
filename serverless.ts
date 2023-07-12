@@ -1,6 +1,7 @@
 import type { AWS } from "@serverless/typescript";
 
-import hello from "@functions/hello";
+import login from "@functions/user/login";
+import create from "@functions/user/create";
 
 const serverlessConfiguration: AWS = {
   service: "backend",
@@ -19,6 +20,8 @@ const serverlessConfiguration: AWS = {
       NODE_OPTIONS: "--enable-source-maps --stack-trace-limit=1000",
       PRODUCT_TABLE_NAME: "products",
       USER_TABLE_NAME: "users",
+      USER_UNIQUE_TABLE_NAME: "users_unique",
+      JWT_SECRET: "PO4hMznhKDwJrMkkmv10I2hJvBjRGxl22Z",
     },
     iam: {
       role: {
@@ -49,12 +52,30 @@ const serverlessConfiguration: AWS = {
               "arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.USER_TABLE_NAME}",
             ],
           },
-        ]
-      }
-    }
+          {
+            Effect: "Allow",
+            Action: [
+              "dynamodb:DescribeTable",
+              "dynamodb:GetItem",
+              "dynamodb:PutItem",
+            ],
+            Resource: [
+              "arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.USER_UNIQUE_TABLE_NAME}",
+            ],
+          },
+          {
+            Effect: "Allow",
+            Action: ["dynamodb:DescribeTable", "dynamodb:Query"],
+            Resource: [
+              "arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.USER_TABLE_NAME}/index/*",
+            ],
+          },
+        ],
+      },
+    },
   },
   // import the function via paths
-  functions: { hello },
+  functions: { login, create },
   package: { individually: true },
   custom: {
     esbuild: {
@@ -132,6 +153,21 @@ const serverlessConfiguration: AWS = {
               },
             },
           ],
+        },
+      },
+      UserUniqueTable: {
+        Type: "AWS::DynamoDB::Table",
+        DeletionPolicy: "Delete",
+        Properties: {
+          TableName: "${self:provider.environment.USER_UNIQUE_TABLE_NAME}",
+          AttributeDefinitions: [
+            { AttributeName: "email", AttributeType: "S" },
+          ],
+          KeySchema: [{ AttributeName: "email", KeyType: "HASH" }],
+          ProvisionedThroughput: {
+            ReadCapacityUnits: 1,
+            WriteCapacityUnits: 1,
+          },
         },
       },
     },
