@@ -1,10 +1,17 @@
-interface Product {
+export enum Role {
+  user = "user",
+  admin = "admin",
+}
+
+export const DefaultHashRound = 10
+
+interface User {
   id: string;
   email: string;
   password: string;
-  role: "user" | "admin";
+  role: Role;
   createdAt: string;
   updatedAt: string;
 }
 
-export default Product;
+export default User;
