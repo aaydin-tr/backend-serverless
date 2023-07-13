@@ -6,6 +6,7 @@ import schema from "./schema";
 import productRepository from "../../../repository/product";
 import userRepository from "../../../repository/user";
 import { Role } from "src/models/user";
+import { StatusCodes } from "http-status-codes";
 
 const get: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (
   event: any
@@ -16,7 +17,7 @@ const get: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (
       {
         message: "Unauthorized",
       },
-      401
+      StatusCodes.UNAUTHORIZED
     );
   }
   const productId = event.pathParameters.id;
@@ -26,7 +27,7 @@ const get: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (
       {
         message: "Product Id can not be empty",
       },
-      404
+      StatusCodes.BAD_REQUEST
     );
   }
 
@@ -35,7 +36,7 @@ const get: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (
   if (product.userId !== userId && role !== Role.admin) {
     return formatJSONResponse(
       { message: "User can only see their own products" },
-      401
+      StatusCodes.UNAUTHORIZED
     );
   }
 

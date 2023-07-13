@@ -7,6 +7,7 @@ import userRepository from "../../../repository/user";
 import { Dto } from "../../../dto/user";
 import Product from "src/models/product";
 import { Role } from "src/models/user";
+import { StatusCodes } from "http-status-codes";
 
 const list: ValidatedEventAPIGatewayProxyEvent<null> = async (event: any) => {
   const { id: userId, role } = event.auth.payload;
@@ -15,7 +16,7 @@ const list: ValidatedEventAPIGatewayProxyEvent<null> = async (event: any) => {
       {
         message: "Unauthorized",
       },
-      401
+      StatusCodes.UNAUTHORIZED
     );
   }
 
