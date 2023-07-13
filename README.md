@@ -1,8 +1,6 @@
-# Serverless - AWS Node.js Typescript
+# Project
 
-This project has been generated using the `aws-nodejs-typescript` template from the [Serverless framework](https://www.serverless.com/).
-
-For detailed instructions, please refer to the [documentation](https://www.serverless.com/framework/docs/providers/aws/).
+This app contains CRUD operations for simulate e-commerce product feature lambda functions. All `/product/*` routes under access control. You need to create user and login with that user before use any product route, after create user use `/user/login` function to get jwt token.
 
 ## Installation/deployment instructions
 
@@ -20,15 +18,10 @@ Depending on your preferred package manager, follow the instructions below to de
 - Run `yarn` to install the project dependencies
 - Run `yarn sls deploy` to deploy this stack to AWS
 
-## Test your service
+## Test the service
 
-This template contains a single lambda function triggered by an HTTP request made on the provisioned API Gateway REST API `/user/create` route with `POST` method. The request body must be provided as `application/json`. The body structure is tested by API Gateway against `src/functions/user/create/schema.ts` JSON-Schema definition: it must contain the `email`, `password` and `role` property.
+- Send a `POST` request to `/user/create` with a payload containing a string property named `email`, `password` and `role` will result in API Gateway returning a `200` HTTP status code with a `token` that allows you to call `/product/*` endpoints
 
-- requesting any other path than `/user/create` with any other method than `POST` will result in API Gateway returning a `403` HTTP error code
-- sending a `POST` request to `/user/create` with a payload
-- sending a `POST` request to `/user/create` with a payload containing a string property named `email`, `password` and `role` will result in API Gateway returning a `200` HTTP status code with a message saluting the provided name and the detailed event processed by the lambda
-
-> :warning: All `/product/*` routes under access control. You need to create user and login with that user before use any product route, after create user use `/user/login` function to get jwt token.
 
 ### Remotely
 
