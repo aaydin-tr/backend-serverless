@@ -5,6 +5,8 @@ import { middyfy } from "@libs/lambda";
 import schema from "./schema";
 import productRepository from "../../../repository/product";
 import { Role } from "src/models/user";
+import { StatusCodes } from "http-status-codes";
+import { S3 } from "aws-sdk";
 
 const deleteProduct: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (
   event: any
@@ -15,7 +17,7 @@ const deleteProduct: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (
       {
         message: "Unauthorized",
       },
-      401
+      StatusCodes.UNAUTHORIZED
     );
   }
   const productId = event.pathParameters.id;
@@ -25,7 +27,7 @@ const deleteProduct: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (
       {
         message: "Product Id can not be empty",
       },
-      404
+      StatusCodes.BAD_REQUEST
     );
   }
 
@@ -34,11 +36,20 @@ const deleteProduct: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (
   if (product.userId !== userId && role !== Role.admin) {
     return formatJSONResponse(
       { message: "User can only delete their own products" },
-      401
+      StatusCodes.UNAUTHORIZED
     );
   }
 
+  const s3 = new S3();
   await productRepository.deleteProduct(productId, product.userId);
+  if (product?.image) {
+    await s3
+      .deleteObject({
+        Key: product.image,
+        Bucket: process.env.BUCKET_NAME,
+      })
+      .promise();
+  }
 
   return formatJSONResponse({
     message: "successful",
