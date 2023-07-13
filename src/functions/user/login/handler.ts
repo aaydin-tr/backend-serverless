@@ -6,6 +6,7 @@ import { compareSync } from "bcryptjs";
 import schema from "./schema";
 import userRepository from "../../../repository/user";
 import { sign } from "jsonwebtoken";
+import { EncryptionAlgorithms } from "middy-middleware-jwt-auth";
 
 const login: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (
   event
@@ -24,7 +25,7 @@ const login: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (
     },
     process.env.JWT_SECRET,
     {
-      algorithm: "HS256",
+      algorithm: EncryptionAlgorithms.HS256,
     }
   );
 
