@@ -65,13 +65,14 @@ class ProductRepository {
         TableName: this.tableName,
         Key: { id: productId, userId },
         UpdateExpression:
-          "SET detail = :detail, #n = :productName, updatedAt = :updatedAt",
+          "SET detail = :detail, #n = :productName, updatedAt = :updatedAt, image = :image",
         ExpressionAttributeNames: {
           "#n": "name",
         },
         ExpressionAttributeValues: {
           ":detail": update.detail,
           ":productName": update.name,
+          ":image": update.image,
           ":updatedAt": new Date().toISOString(),
         },
         ReturnValues: "ALL_NEW",
