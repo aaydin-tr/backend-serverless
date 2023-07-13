@@ -11,11 +11,12 @@ import User, { DefaultHashRound } from "../../../models/user";
 const create: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (
   event
 ) => {
-  const { password, ...body } = event.body;
+  const { password, email, role } = event.body;
   const passwordHash = await hash(password, DefaultHashRound);
 
   const user: User = {
-    ...body,
+    email,
+    role,
     id: v4(),
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
