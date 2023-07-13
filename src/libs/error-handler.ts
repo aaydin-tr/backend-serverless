@@ -9,6 +9,7 @@ const httpErrorHandlerMiddleware = () => {
     }
     
     if (!request.error.statusCode || !request.error.expose) {
+      console.log(request?.error)
       request.error = {
         statusCode: 500,
         message: "Something went wrong",
