@@ -27,6 +27,7 @@ const serverlessConfiguration: AWS = {
       USER_TABLE_NAME: "users",
       USER_UNIQUE_TABLE_NAME: "users_unique",
       JWT_SECRET: "PO4hMznhKDwJrMkkmv10I2hJvBjRGxl22Z",
+      BUCKET_NAME: "serverless-product-images",
     },
     iam: {
       role: {
@@ -83,6 +84,19 @@ const serverlessConfiguration: AWS = {
               "arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.PRODUCT_TABLE_NAME}/index/*",
             ],
           },
+          {
+            Effect: "Allow",
+            Action: [
+              "s3:ListBucket",
+              "s3:GetObject",
+              "s3:PutObject",
+              "s3:DeleteObject",
+            ],
+            Resource: [
+              "arn:aws:s3:::${self:provider.environment.BUCKET_NAME}",
+              "arn:aws:s3:::${self:provider.environment.BUCKET_NAME}/*",
+            ],
+          },
         ],
       },
     },
@@ -95,7 +109,7 @@ const serverlessConfiguration: AWS = {
     getProduct,
     getAllProduct,
     deleteProduct,
-    updateProduct
+    updateProduct,
   },
   package: { individually: true },
   custom: {
