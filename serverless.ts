@@ -1,7 +1,12 @@
 import type { AWS } from "@serverless/typescript";
 
-import login from "@functions/user/login";
-import create from "@functions/user/create";
+import userLogin from "@functions/user/login";
+import userCreate from "@functions/user/create";
+import createProduct from "@functions/product/create";
+import getProduct from "@functions/product/get";
+import getAllProduct from "@functions/product/list";
+import deleteProduct from "@functions/product/delete";
+import updateProduct from "@functions/product/update";
 
 const serverlessConfiguration: AWS = {
   service: "backend",
@@ -35,6 +40,7 @@ const serverlessConfiguration: AWS = {
               "dynamodb:GetItem",
               "dynamodb:PutItem",
               "dynamodb:DeleteItem",
+              "dynamodb:UpdateItem",
             ],
             Resource: [
               "arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.PRODUCT_TABLE_NAME}",
@@ -70,12 +76,27 @@ const serverlessConfiguration: AWS = {
               "arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.USER_TABLE_NAME}/index/*",
             ],
           },
+          {
+            Effect: "Allow",
+            Action: ["dynamodb:DescribeTable", "dynamodb:Query"],
+            Resource: [
+              "arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.PRODUCT_TABLE_NAME}/index/*",
+            ],
+          },
         ],
       },
     },
   },
   // import the function via paths
-  functions: { login, create },
+  functions: {
+    userLogin,
+    userCreate,
+    createProduct,
+    getProduct,
+    getAllProduct,
+    deleteProduct,
+    updateProduct
+  },
   package: { individually: true },
   custom: {
     esbuild: {
@@ -98,11 +119,11 @@ const serverlessConfiguration: AWS = {
           TableName: "${self:provider.environment.PRODUCT_TABLE_NAME}",
           AttributeDefinitions: [
             { AttributeName: "id", AttributeType: "S" },
-            { AttributeName: "user_id", AttributeType: "S" },
+            { AttributeName: "userId", AttributeType: "S" },
           ],
           KeySchema: [
             { AttributeName: "id", KeyType: "HASH" },
-            { AttributeName: "user_id", KeyType: "RANGE" },
+            { AttributeName: "userId", KeyType: "RANGE" },
           ],
           ProvisionedThroughput: {
             ReadCapacityUnits: 1,
@@ -111,7 +132,7 @@ const serverlessConfiguration: AWS = {
           GlobalSecondaryIndexes: [
             {
               IndexName: "product_index",
-              KeySchema: [{ AttributeName: "user_id", KeyType: "HASH" }],
+              KeySchema: [{ AttributeName: "userId", KeyType: "HASH" }],
               Projection: {
                 ProjectionType: "ALL",
               },
