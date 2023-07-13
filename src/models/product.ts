@@ -1,8 +1,8 @@
 interface Product {
   id: string;
   name: string;
-  description: string;
-  createdBy: string;
+  detail: string;
+  userId: string;
   createdAt: string;
   updatedAt: string;
 }
